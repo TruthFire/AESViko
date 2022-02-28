@@ -17,7 +17,7 @@ namespace AESViko
 
         public byte[] StringToBytes(String key)
         {
-            int stringSizeInBytes = System.Text.ASCIIEncoding.Unicode.GetByteCount(key);
+            int stringSizeInBytes = System.Text.ASCIIEncoding.UTF8.GetByteCount(key);
             //Check if key string is 128, 192 or 256 bits;
             if( stringSizeInBytes == 16 || stringSizeInBytes == 24 || stringSizeInBytes == 32)
             {
@@ -26,7 +26,7 @@ namespace AESViko
             else
             {
                 throw new ArgumentOutOfRangeException("Key should be 128, 192, 256 bits\n" +
-                    "Random key will be generated, if key input is empty");
+                    "IV should be 128 bits\nPlease write them in or generate");
             }
         }
 
@@ -43,7 +43,7 @@ namespace AESViko
             byte[] encrypted;
 
             
-            // with the specified key and IV.
+            // with the specified key, IV and mode.
             using (Aes aesAlg = Aes.Create())
             {
                 aesAlg.Key = Key;
@@ -70,6 +70,49 @@ namespace AESViko
 
             // Return the encrypted bytes from the memory stream.
             return System.Convert.ToBase64String(encrypted);
+        }
+
+        public string DecryptStringFromBase64_Aes(string cipherText, byte[] Key, byte[] IV, CipherMode mode)
+        {
+            // Check arguments.
+            if (cipherText == null || cipherText.Length <= 0)
+                throw new ArgumentNullException("cipherText");
+            if (Key == null || Key.Length <= 0)
+                throw new ArgumentNullException("Key");
+            if (IV == null || IV.Length <= 0)
+                throw new ArgumentNullException("IV");
+
+            byte[] rawText = Convert.FromBase64String(cipherText);
+            // the decrypted text.
+            string plaintext = "";
+
+            
+            using (Aes aesAlg = Aes.Create())
+            {
+                aesAlg.Key = Key;
+                aesAlg.IV = IV;
+                aesAlg.Mode = mode;
+
+                // Create a decryptor to perform the stream transform.
+                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+                // Create the streams used for decryption.
+                using (MemoryStream msDecrypt = new MemoryStream(rawText))
+                {
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    {
+                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                        {
+
+                            // Read the decrypted bytes from the decrypting stream
+                            // and place them in a string.
+                            plaintext = srDecrypt.ReadToEnd();
+                        }
+                    }
+                }
+            }
+
+            return plaintext;
         }
     }
 }
