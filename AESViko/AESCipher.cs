@@ -30,7 +30,7 @@ namespace AESViko
             }
         }
 
-        public string EncryptStringToBase64_Aes(string rawText, byte[] Key, byte[] IV)
+        public string EncryptStringToBase64_Aes(string rawText, byte[] Key, byte[] IV, CipherMode mode)
         {
             // Check arguments.
             if (rawText == null || rawText.Length <= 0)
@@ -47,8 +47,9 @@ namespace AESViko
             using (Aes aesAlg = Aes.Create())
             {
                 aesAlg.Key = Key;
-                aesAlg.IV = IV;
-
+                aesAlg.IV = IV; 
+                aesAlg.Mode = mode;
+                
                 // Create an encryptor to perform the stream transform.
                 ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
 

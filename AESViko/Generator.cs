@@ -13,7 +13,7 @@ namespace AESViko
 
         }
 
-        public string generate(int size)
+        public string Generate(int size)
         {
             Random random = new Random();
 

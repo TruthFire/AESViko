@@ -1,13 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.IO;
 using System.Security.Cryptography;
 
 namespace AESViko
@@ -18,6 +10,7 @@ namespace AESViko
         {
             InitializeComponent();
             comboBox1.SelectedIndex = 0;
+            comboBox2.SelectedIndex = 0;
             
         }
 
@@ -26,25 +19,37 @@ namespace AESViko
             using (Aes myAes = Aes.Create())
             {
                 AESCipher crypter = new();
-
+                CipherMode cMode;
                 //MessageBox.Show(System.Convert.ToBase64String(myAes.IV));
                 
+                // Get CipherMode from combobox
+                if(comboBox1.Text == "CBC")
+                {
+                    cMode = CipherMode.CBC;
+                }
+                else
+                {
+                    cMode = CipherMode.ECB;
+                }
+             
+
                 // Encrypt the string to an base64 string
                 try
                 {
-                    myAes.Mode = CipherMode.ECB;
+                    
                     if (!String.IsNullOrWhiteSpace(textBox3.ToString()))
                     {
-                        
-                        textBox2.Text = crypter.EncryptStringToBase64_Aes(text,
-                            myAes.Key, myAes.IV);
-                        textBox2.Text += "\nIV: " + System.Convert.ToBase64String(myAes.IV);
-                    }
-                    else
-                    { 
                         myAes.Key = crypter.StringToBytes(textBox3.Text);
                         textBox2.Text = crypter.EncryptStringToBase64_Aes(text,
-                            myAes.Key,myAes.IV);
+                            myAes.Key, myAes.IV, cMode);
+                        textBox2.Text += "\nIV: " + System.Convert.ToBase64String(myAes.IV);
+                    }
+
+                    else
+                    { 
+                        
+                        textBox2.Text = crypter.EncryptStringToBase64_Aes(text,
+                            myAes.Key,myAes.IV, cMode);
                         textBox2.Text += "\nIV: " + System.Convert.ToBase64String(myAes.IV);
                     }
                 }
@@ -64,6 +69,13 @@ namespace AESViko
         private void button2_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Generator Gen = new();
+            textBox3.Text = Gen.Generate(Convert.ToInt32(comboBox2.Text));
+            textBox4.Text = Gen.Generate(128);
         }
     }
 
