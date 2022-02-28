@@ -28,23 +28,13 @@ namespace AESViko
                 // Encrypt the string to an base64 string
                 try
                 {
-                    
-                    if (!String.IsNullOrWhiteSpace(textBox3.ToString()))
-                    {
-                        myAes.Key = crypter.StringToBytes(textBox3.Text);
-                        myAes.IV = crypter.StringToBytes(textBox4.Text);
+                    myAes.Key = crypter.StringToBytes(textBox3.Text);
+                    myAes.IV = crypter.StringToBytes(textBox4.Text);
 
-                        textBox2.Text = crypter.EncryptStringToBase64_Aes(text,
-                            myAes.Key, myAes.IV, cMode);
-                        //textBox2.Text += "\nIV: " + System.Convert.ToBase64String(myAes.IV);
-                    }
+                    textBox2.Text = crypter.EncryptStringToBase64_Aes(text,
+                        myAes.Key, myAes.IV, cMode);
 
-                    else
-                    {
 
-                        GenerateKeyAndIV();
-                        EncryptText(text);
-                    }
                 }
                 catch (Exception ex)
                 {
@@ -60,7 +50,7 @@ namespace AESViko
             {
                 AESCipher crypter = new();
 
-                //MessageBox.Show(System.Convert.ToBase64String(myAes.IV));
+                
 
                 // Get CipherMode from combobox
                 CipherMode cMode = GetCipherMode();
@@ -69,20 +59,16 @@ namespace AESViko
                 try
                 {
 
-                    if (!String.IsNullOrWhiteSpace(textBox3.ToString()))
-                    {
-                        myAes.Key = crypter.StringToBytes(textBox3.Text);
-                        myAes.IV = crypter.StringToBytes(textBox4.Text);
 
-                        textBox1.Text = crypter.DecryptStringFromBase64_Aes(text,
-                            myAes.Key, myAes.IV, cMode);
-                        //textBox2.Text += "\nIV: " + System.Convert.ToBase64String(myAes.IV);
-                    }
+                    myAes.Key = crypter.StringToBytes(textBox3.Text);
+                    myAes.IV = crypter.StringToBytes(textBox4.Text);
 
-                    else
-                    {
-                        throw new ArgumentNullException("There is no encrypted text"); 
-                    }
+                    textBox1.Text = crypter.DecryptStringFromBase64_Aes(text,
+                        myAes.Key, myAes.IV, cMode);
+
+
+
+
                 }
                 catch (Exception ex)
                 {

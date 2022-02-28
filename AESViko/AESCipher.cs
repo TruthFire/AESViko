@@ -34,11 +34,7 @@ namespace AESViko
         {
             // Check arguments.
             if (rawText == null || rawText.Length <= 0)
-                throw new ArgumentNullException("plainText");
-            if (Key == null || Key.Length <= 0)
-                throw new ArgumentNullException("Key");
-            if (IV == null || IV.Length <= 0)
-                throw new ArgumentNullException("IV");
+                throw new ArgumentNullException("Plain(Decrypted) text input is empty");            
 
             byte[] encrypted;
 
@@ -68,7 +64,7 @@ namespace AESViko
                 }
             }
 
-            // Return the encrypted bytes from the memory stream.
+            // Return the encrypted bytes from the memory stream and convert them to base64.
             return System.Convert.ToBase64String(encrypted);
         }
 
@@ -76,11 +72,7 @@ namespace AESViko
         {
             // Check arguments.
             if (cipherText == null || cipherText.Length <= 0)
-                throw new ArgumentNullException("cipherText");
-            if (Key == null || Key.Length <= 0)
-                throw new ArgumentNullException("Key");
-            if (IV == null || IV.Length <= 0)
-                throw new ArgumentNullException("IV");
+                throw new ArgumentNullException("Ecnrypted text input is empty or null");
 
             byte[] rawText = Convert.FromBase64String(cipherText);
             // the decrypted text.
