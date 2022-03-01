@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Security.Cryptography;
+using System.IO;
+using System.Text;
 
 namespace AESViko
 {
@@ -125,6 +127,34 @@ namespace AESViko
             }
 
             return cMode;
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (String.IsNullOrWhiteSpace(textBox2.Text))
+                {
+                    throw new ArgumentNullException("Please encrypt your text first");
+                }
+                string creationTime = DateTime.Now.ToString("dd_mm_yyyy_HH_mm");
+                string fileName = "EncryptedText_" + creationTime + ".txt";
+
+                // Check if file already exists. If yes, delete it.     
+                if (File.Exists(fileName))
+                {
+                    File.Delete(fileName);
+                }
+
+                // Create a new file
+                File.WriteAllText(fileName, textBox2.Text);
+
+
+            }
+            catch (Exception Ex)
+            {
+                MessageBox.Show(Ex.ToString());
+            }
         }
     }
 
