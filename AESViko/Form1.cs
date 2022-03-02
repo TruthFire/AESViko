@@ -13,7 +13,6 @@ namespace AESViko
             InitializeComponent();
             comboBox1.SelectedIndex = 0;
             comboBox2.SelectedIndex = 0;
-            
         }
 
         private void EncryptText(string text)
@@ -36,7 +35,6 @@ namespace AESViko
                     textBox2.Text = crypter.EncryptStringToBase64_Aes(text,
                         myAes.Key, myAes.IV, cMode);
 
-
                 }
                 catch (Exception ex)
                 {
@@ -52,25 +50,17 @@ namespace AESViko
             {
                 AESCipher crypter = new();
 
-                
-
                 // Get CipherMode from combobox
                 CipherMode cMode = GetCipherMode();
 
                 // Encrypt the string to an base64 string
                 try
                 {
-
-
                     myAes.Key = crypter.StringToBytes(textBox3.Text);
                     myAes.IV = crypter.StringToBytes(textBox4.Text);
 
                     textBox1.Text = crypter.DecryptStringFromBase64_Aes(text,
                         myAes.Key, myAes.IV, cMode);
-
-
-
-
                 }
                 catch (Exception ex)
                 {
@@ -137,7 +127,7 @@ namespace AESViko
                 {
                     throw new ArgumentNullException("Please encrypt your text first");
                 }
-                string creationTime = DateTime.Now.ToString("dd_mm_yyyy_HH_mm");
+                string creationTime = DateTime.Now.ToString("dd_mm_yyyy_HH_mm_ss");
                 string fileName = "EncryptedText_" + creationTime + ".txt";
 
                 // Check if file already exists. If yes, delete it.     
@@ -149,11 +139,48 @@ namespace AESViko
                 // Create a new file
                 File.WriteAllText(fileName, textBox2.Text);
 
+                if(MessageBox.Show("Do you want to save Key and IV in separate file?",
+                    "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    fileName = "KeyIvText_" + creationTime + ".txt";
+                    if (File.Exists(fileName))
+                    {
+                        File.Delete(fileName);
+                    }
+                    string KeyIv = String.Format("Key: {0}\nIV: {1}.txt", textBox3.Text, textBox4.Text);
+                    File.WriteAllText(fileName, KeyIv);
+
+                }
 
             }
             catch (Exception Ex)
             {
-                MessageBox.Show(Ex.ToString());
+                MessageBox.Show(Ex.Message);
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Show openfiledialog
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    openFileDialog.InitialDirectory = "";
+                    openFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+                    openFileDialog.FilterIndex = 2;
+                    openFileDialog.RestoreDirectory = true;
+
+                    // Read all content of file to textbox
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        textBox2.Text = File.ReadAllText(openFileDialog.SafeFileName);
+                    }
+                }
+            }
+            catch(Exception Ex)
+            {
+                MessageBox.Show(Ex.Message);
             }
         }
     }
